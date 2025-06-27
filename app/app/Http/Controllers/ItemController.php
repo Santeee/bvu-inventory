@@ -135,12 +135,19 @@ class ItemController extends Controller
      */
     public function search(Request $request)
     {
-        $query = $request->get('query');
+        $query = trim($request->get('query', ''));
+        
+        // If no query provided, redirect to index
+        if (empty($query)) {
+            return redirect()->route('items.index');
+        }
         
         $items = Item::where('elementos', 'like', "%{$query}%")
             ->orWhere('ubicacion', 'like', "%{$query}%")
             ->orWhere('destino', 'like', "%{$query}%")
             ->orWhere('estado', 'like', "%{$query}%")
+            ->orWhere('observaciones', 'like', "%{$query}%")
+            ->orWhere('operador', 'like', "%{$query}%")
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 
